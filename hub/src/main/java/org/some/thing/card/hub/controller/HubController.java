@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -23,11 +24,11 @@ public class HubController {
   private final CardsService cardsService;
 
   @RequestMapping(method = GET, value = "/cards", produces = MediaType.APPLICATION_JSON_VALUE)
-  public List<Card> loadCards(@RequestHeader("userId") String userId,
-                              @RequestHeader("longitude") BigDecimal longitude,
-                              @RequestHeader("latitude") BigDecimal latitude,
-                              @RequestParam("currentDate") Long currentDate) {
-    return cardsService.loadCards(UserData.builder()
+  public Callable<List<Card>> loadCards(@RequestHeader("userId") String userId,
+                                       @RequestHeader("longitude") BigDecimal longitude,
+                                       @RequestHeader("latitude") BigDecimal latitude,
+                                       @RequestParam("currentDate") Long currentDate) {
+    return () -> cardsService.loadCards(UserData.builder()
         .currentDate(currentDate)
         .userId(userId)
         .geoPosition(GeoPosition.builder()
