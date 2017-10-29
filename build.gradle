@@ -1,8 +1,11 @@
 buildscript {
   ext {
-    springBootVersion = '1.5.7.RELEASE'
+    springBootVersion = '2.0.0.M5'
   }
   repositories {
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url 'https://repo.spring.io/libs-milestone' }
     mavenCentral()
     jcenter()
   }
@@ -23,6 +26,9 @@ allprojects {
   apply plugin: 'io.spring.dependency-management'
 
   repositories {
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url 'https://repo.spring.io/libs-milestone' }
     mavenCentral()
     jcenter()
   }
@@ -52,7 +58,7 @@ configure(springProjects) {
 
   dependencies {
     compile project(':commons')
-    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-webflux'
     testCompile('org.springframework.boot:spring-boot-starter-test')
   }
 }

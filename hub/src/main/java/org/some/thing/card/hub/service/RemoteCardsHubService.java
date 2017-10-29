@@ -4,13 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.some.thing.card.entity.Card;
 import org.some.thing.card.entity.UserData;
-import org.some.thing.card.hub.client.AdviceCardClient;
 import org.some.thing.card.hub.client.CardClient;
-import org.some.thing.card.hub.client.FinesCardClient;
-import org.some.thing.card.hub.client.RegularCardClient;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
