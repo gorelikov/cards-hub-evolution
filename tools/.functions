@@ -1,0 +1,116 @@
+pushd () {
+  command pushd "$@" > /dev/null
+}
+
+popd () {
+  command popd "$@" > /dev/null
+}
+
+echoerr() { echo -e "$@" 1>&2; }
+echoerrn() { echo -en "$@" 1>&2; }
+echoerrt() { echo -e "$@" | column -t -s':' 1>&2; }
+
+Black='\033[0;30m'
+Red='\033[0;31m'
+Green='\033[0;32m'
+Yellow='\033[0;33m'
+Cyan='\033[0;36m'
+Purple='\033[0;35m'
+White='\033[0;37m'
+
+BBlack='\033[1;30m'
+BRed='\033[1;31m'
+BGreen='\033[1;32m'
+BYellow='\033[1;33m'
+BCyan='\033[1;36m'
+BPurple='\033[1;35m'
+BWhite='\033[1;37m'
+
+On_Black='\033[40m'
+On_Red='\033[41m'
+On_Green='\033[42m'
+On_Yellow='\033[43m'
+On_Blue='\033[44m'
+On_Purple='\033[45m'
+On_Cyan='\033[46m'
+On_White='\033[47m'
+
+NC='\033[0m'
+
+_done() {
+  echo -e "${BGreen}Done$NC"
+}
+
+_success() {
+  echo -e "${BGreen}Success$NC"
+}
+
+_fail() {
+  echo -e "${Red}Fail${NC}"
+}
+
+_end_color() { 
+  echo -e "$NC"
+}
+
+_start_yellow() {
+  echo -e "$Yellow"
+}
+_start_greenb() {
+  echo -e "$BGreen"
+}
+
+_yellow() {
+  echo -e ${Yellow}$@$NC
+}
+_yellowb() {
+  echo -e "${BYellow}$@$NC"
+}
+_green() {
+  echo -e "${Green}$@$NC"
+}
+_greenb() {
+  echo -e "${BGreen}$@$NC"
+}
+
+HIDE_STATUS="false"
+handle_exit() {
+  if [ $HIDE_STATUS = "true" ];then
+    return 0
+  fi
+  CODE=$?
+  if [ $CODE -ne 0 ]; then
+      _fail
+  else
+      _success
+  fi
+}
+
+no_status() {
+  HIDE_STATUS="true"
+}
+
+#url
+urlencode() {
+    # urlencode <string>
+    old_lc_collate=$LC_COLLATE
+    LC_COLLATE=C
+
+    local length="${#1}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${1:i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) printf "$c" ;;
+            *) printf '%%%02X' "'$c" ;;
+        esac
+    done
+
+    LC_COLLATE=$old_lc_collate
+}
+
+urldecode() {
+    # urldecode <string>
+
+    local url_encoded="${1//+/ }"
+    printf '%b' "${url_encoded//%/\\x}"
+}

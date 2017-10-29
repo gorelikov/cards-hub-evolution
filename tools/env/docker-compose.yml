@@ -1,0 +1,12 @@
+version: '2'
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+  wiremock:
+    image: rodolpheche/wiremock
+    ports:
+      - "9999:8080"
+    volumes:
+      - ../mock:/home/wiremock

@@ -1,0 +1,58 @@
+buildscript {
+  ext {
+    springBootVersion = '1.5.7.RELEASE'
+  }
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
+ext {
+  springProjects = [project(':hub'),
+                    project(':fines-cards'),
+                    project(':advice-cards'),
+                    project(':regular-cards')
+  ]
+}
+
+allprojects {
+  apply plugin: 'io.spring.dependency-management'
+
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+
+  dependencyManagement {
+    dependencies {
+      dependency 'org.projectlombok:lombok:1.16.16'
+      dependency 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.9'
+    }
+  }
+}
+
+subprojects {
+  apply plugin: 'java'
+
+  version = '0.0.1-SNAPSHOT'
+  group = 'org.some.thing.cards'
+  sourceCompatibility = 1.8
+
+  dependencies {
+    compileOnly('org.projectlombok:lombok')
+  }
+}
+
+configure(springProjects) {
+  apply plugin: 'org.springframework.boot'
+
+  dependencies {
+    compile project(':commons')
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+  }
+}

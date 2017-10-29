@@ -1,0 +1,6 @@
+rootProject.name = 'cards-hub'
+include 'hub'
+include 'fines-cards'
+include 'advice-cards'
+include 'regular-cards'
+include 'commons'

@@ -1,0 +1,10 @@
+server:
+  port: 8083
+
+regular:
+  executeUrl: http://something.org/regular/execute
+
+spring:
+  data.mongodb:
+    uri: mongodb://localhost:27020/cards
+    repositories.enabled: true
