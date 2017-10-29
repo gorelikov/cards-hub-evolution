@@ -22,10 +22,9 @@ public class RegularController {
   @GetMapping(value = "/", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
   public Flux<RegularCard> loadRegular(@RequestHeader("userId") String userId,
                                        @RequestParam("currentDate") Long currentDate) {
-    return Mono.fromCallable(() -> regularService.loadRegular(UserData.builder()
+    return regularService.loadRegular(UserData.builder()
             .currentDate(currentDate)
             .userId(userId)
-            .build()))
-            .flatMapIterable(res -> res);
+            .build());
   }
 }

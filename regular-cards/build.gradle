@@ -1,3 +1,4 @@
 dependencies {
   compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+  compile 'org.mongodb:mongodb-driver-reactivestreams'
 }
