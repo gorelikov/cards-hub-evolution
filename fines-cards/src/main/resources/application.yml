@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: fines-cards
+
+fines:
+  executeUrl: http://something.org/fines/execute
+  egovURL: http://localhost:9999
+
+server:
+  port: 8082

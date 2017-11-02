@@ -1,0 +1,1 @@
+db.test.insert({t: 1});

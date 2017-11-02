@@ -1,0 +1,12 @@
+management:
+  security:
+    enabled: false
+
+spring:
+  application:
+    name: cards-hub
+
+hub:
+  finesURL: http://localhost:8082
+  regularURL: http://localhost:8083
+  adviceURL: http://localhost:8081

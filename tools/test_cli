@@ -1,0 +1,109 @@
+#!/bin/bash
+
+set -euf -o pipefail
+D=$(dirname $BASH_SOURCE)
+source $D/.functions
+trap "handle_exit" EXIT
+
+hub_port=8080
+advice_port=8081
+fines_port=8082
+regular_port=8083
+host=localhost
+hub_url=$host:$hub_port/hub/cards
+
+current_date=1500197400000
+user_id=20
+longitude=51.7908562
+latitude=54.962341
+
+COMMAND="${1: }"
+
+remoteCall() {
+    curl -s $1?currentDate=$current_date -XGET -H 'userId:'$user_id -H "longitude: $longitude" -H "latitude: $latitude"
+    printf '=%.0s' {1..100} && echo $1
+}
+
+
+mongo_kill() {
+    docker run --rm --net=host --name=mongo_client -it -v  `pwd`/tools/env:/script mongo:latest mongo localhost:27020/cards /script/killop.js
+}
+
+_infra_status() {
+  $D/.resolve_dev_middleware_ports.sh
+}
+
+case "$COMMAND" in
+  simple_ind_call)
+    _yellow independent call of service
+    remoteCall $host:$advice_port
+    remoteCall $host:$fines_port
+    remoteCall $host:$regular_port
+    ;;
+  simple_hub_call)
+    _yellow hub call
+    remoteCall $hub_url
+    ;;
+  load)
+    _yellow hub call
+    ./$D/load/loader.sh load $hub_url?currentDate=$current_date $user_id $longitude $latitude ${@:2}
+    ;;
+  light_load)
+    _yellow hub call
+    ./$D/load/loader.sh light_load $hub_url?currentDate=$current_date $user_id $longitude $latitude
+    ;;
+  heavy_load)
+    _yellow hub call
+    ./$D/load/loader.sh heavy_load $hub_url?currentDate=$current_date $user_id $longitude $latitude
+    ;;
+  env)
+    _yellow start docker env
+    docker-compose -f $D/env/docker-compose.yml up -d
+    _infra_status
+    ;;
+  env_start)
+    _yellow start docker env
+    docker-compose -f $D/env/docker-compose.yml start
+    _infra_status
+    ;;
+  mongo_fill)
+    _yellowb 'fill mongo(repeat that a couple ot times)'
+    docker run --rm --net=host --name=mongo_client -it -v  `pwd`/tools/env:/script mongo:latest mongo localhost:27020/cards /script/init.js
+    docker run --rm --net=host --name=mongo_client -it -v  `pwd`/tools/env:/script mongo:latest mongo localhost:27020 --eval "var database='cards', collection='users', rows=2000000" /script/fill.js
+    ;;
+  mongo_kill_op)
+    _yellowb kill all long running operation in mongo
+    mongo_kill
+    ;;
+  env_down)
+    _yellow down docker env
+    docker-compose -f $D/env/docker-compose.yml down
+    docker ps
+    ;;
+  env_stop)
+    _yellow stop docker env
+    docker-compose -f $D/env/docker-compose.yml stop
+    docker ps
+    ;;
+  env_restart)
+    _yellow stop docker env
+    docker-compose -f $D/env/docker-compose.yml restart
+    docker ps
+    ;;
+  clean_boot)
+    _greenb clean and run all projects
+    trap 'mongo_kill' SIGINT
+    ./gradlew clean :fines-cards:bootRun :advice-cards:bootRun :regular-cards:bootRun :hub:bootRun --parallel --max-workers=4 -x test
+    ;;
+  boot)
+    _greenb run all projects
+    trap 'mongo_kill' SIGINT
+    ./gradlew :fines-cards:bootRun :advice-cards:bootRun :regular-cards:bootRun :hub:bootRun --parallel --max-workers=4 -x test
+    ;;
+  *)
+    echo "use command [simple_ind_call|simple_hub_call|load|light_load|heavy_load|env|env_stop|env_restart|env_down|mongo_fill|boot]"
+    no_status
+    _done
+  ;;
+esac
+

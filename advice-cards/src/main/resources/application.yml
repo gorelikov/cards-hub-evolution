@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: advice-cards
+
+advice:
+  executeUrl: http://something.org/advise/execute
+
