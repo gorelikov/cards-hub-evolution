@@ -7,8 +7,8 @@ import org.some.thing.card.regular.service.RegularService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,12 +17,13 @@ public class RegularController {
 
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RegularCard> loadRegular(@RequestHeader("userId") String userId,
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    public Flux<RegularCard> loadRegular(@RequestHeader("userId") String userId,
                                          @RequestParam("currentDate") Long currentDate) {
-        return regularService.loadRegular(UserData.builder()
+        return Mono.fromCallable(() -> regularService.loadRegular(UserData.builder()
                 .currentDate(currentDate)
                 .userId(userId)
-                .build());
+                .build()))
+                .flatMapIterable(res -> res);
     }
 }

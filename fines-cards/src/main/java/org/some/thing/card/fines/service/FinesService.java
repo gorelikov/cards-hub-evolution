@@ -2,9 +2,8 @@ package org.some.thing.card.fines.service;
 
 import org.some.thing.card.entity.UserData;
 import org.some.thing.card.fines.entity.FineCard;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface FinesService {
-    List<FineCard> loadFines(UserData userData);
+    Flux<FineCard> loadFines(UserData userData);
 }

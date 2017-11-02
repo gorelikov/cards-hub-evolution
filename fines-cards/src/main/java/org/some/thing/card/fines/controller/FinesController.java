@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +19,8 @@ public class FinesController {
 
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FineCard> loadFines(@RequestHeader("userId") String userId) {
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
+    public Flux<FineCard> loadFines(@RequestHeader("userId") String userId) {
         return finesService.loadFines(UserData.builder()
                 .userId(userId)
                 .build());

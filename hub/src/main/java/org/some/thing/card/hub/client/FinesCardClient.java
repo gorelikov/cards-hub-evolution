@@ -4,6 +4,7 @@ import org.some.thing.card.hub.client.dto.FineCard;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,11 +18,11 @@ public class FinesCardClient implements CardClient<FineCard> {
         this.cardClient = new BaseCardClient(url);
     }
 
-    public List<FineCard> getCards(String userId,
+    public Flux<FineCard> getCards(String userId,
                                    BigDecimal longitude,
                                    BigDecimal latitude,
                                    Long currentDate) {
-        return cardClient.<FineCard>getCards(userId, longitude, latitude, currentDate, MediaType.APPLICATION_JSON)
-                .getBody();
+        return cardClient.getCards(userId, longitude, latitude, currentDate, MediaType.APPLICATION_STREAM_JSON)
+                .flatMapMany(res -> res.bodyToFlux(FineCard.class));
     }
 }

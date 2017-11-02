@@ -2,9 +2,8 @@ package org.some.thing.card.advice.service;
 
 import org.some.thing.card.advice.entity.AdviceCard;
 import org.some.thing.card.entity.UserData;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface AdviceService {
-    List<AdviceCard> defineAdvices(UserData userData);
+    Flux<AdviceCard> defineAdvices(UserData userData);
 }
