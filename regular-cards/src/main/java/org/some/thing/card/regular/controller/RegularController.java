@@ -22,6 +22,7 @@ public class RegularController {
         return regularService.loadRegular(UserData.builder()
                 .currentDate(currentDate)
                 .userId(userId)
-                .build());
+                .build())
+                .log();
     }
 }
