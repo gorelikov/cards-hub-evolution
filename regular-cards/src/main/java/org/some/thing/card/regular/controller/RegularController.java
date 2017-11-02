@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,10 +19,9 @@ public class RegularController {
     @GetMapping(value = "/", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
     public Flux<RegularCard> loadRegular(@RequestHeader("userId") String userId,
                                          @RequestParam("currentDate") Long currentDate) {
-        return Mono.fromCallable(() -> regularService.loadRegular(UserData.builder()
+        return regularService.loadRegular(UserData.builder()
                 .currentDate(currentDate)
                 .userId(userId)
-                .build()))
-                .flatMapIterable(res -> res);
+                .build());
     }
 }
